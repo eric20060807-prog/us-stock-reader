@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>美股雷达｜行业行情、政策新闻与交易机会</title>
+<meta name="description" content="美股各行业实时行情热力图、宏观数据、美联储与政策动态，以及按规则筛选的交易机会。">
+<meta name="theme-color" content="#0C1424">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230C1424'/%3E%3Cpath d='M4 22 L11 15 L16 19 L28 7' stroke='%237FE7FF' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 22 L11 14 L16 18 L29 6" /></svg>
+    <span>美股雷达</span>
+  </div>
+  <div class="status">
+    <span id="mkt-state" class="pill">—</span>
+    <span id="ny-clock" class="clock" title="美东时间">—</span>
+    <span id="updated" class="muted">正在加载数据</span>
+  </div>
+</header>
+
+<div class="tape" aria-label="主要指数与资产行情"><div class="tape-track" id="tape"></div></div>
+
+<main id="main">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="map-panel">
+      <div class="panel-head">
+        <h1 id="hero-title">美股全景</h1>
+        <div class="seg" role="group" aria-label="热力图周期" id="map-period">
+          <button data-p="chg1" aria-pressed="true">今日</button>
+          <button data-p="r5" aria-pressed="false">一周</button>
+          <button data-p="r21" aria-pressed="false">一个月</button>
+          <button data-p="ytd" aria-pressed="false">今年以来</button>
+        </div>
+      </div>
+      <p class="hint">方块大小代表市值，颜色代表涨跌。点击任意股票查看详情和买卖价位。</p>
+      <div id="treemap" class="treemap" role="img" aria-label="按行业分组的股票涨跌热力图"></div>
+      <div class="legend" id="map-legend"></div>
+    </div>
+
+    <aside class="side">
+      <div class="block">
+        <h2>今日速览</h2>
+        <ul id="brief" class="brief"></ul>
+      </div>
+      <div class="block">
+        <h2>市场情绪</h2>
+        <div class="gauge-wrap">
+          <svg id="gauge" viewBox="0 0 220 128" aria-hidden="true"></svg>
+          <div class="gauge-read"><b id="senti-score">—</b><span id="senti-label">—</span></div>
+        </div>
+        <ul id="senti-parts" class="parts"></ul>
+      </div>
+      <div class="block">
+        <h2>市场宽度</h2>
+        <div class="ad-bar" id="ad-bar"><span class="adv"></span><span class="dec"></span></div>
+        <div class="ad-legend" id="ad-legend"></div>
+      </div>
+    </aside>
+  </section>
+
+  <nav class="sections" aria-label="页面导航">
+    <a href="#indices">指数</a><a href="#sectors">行业</a><a href="#radar">机会雷达</a>
+    <a href="#news">政策与新闻</a><a href="#macro">宏观数据</a><a href="#earnings">财报日历</a><a href="#screener">选股器</a>
+  </nav>
+
+  <section id="indices" class="section">
+    <h2 class="sec-title">主要指数与资产</h2>
+    <div class="index-grid" id="index-grid"></div>
+  </section>
+
+  <section id="sectors" class="section">
+    <div class="sec-head">
+      <h2 class="sec-title">行业表现</h2>
+      <div class="seg" role="group" aria-label="行业周期" id="sector-period">
+        <button data-p="chg1" aria-pressed="true">今日</button>
+        <button data-p="r5" aria-pressed="false">一周</button>
+        <button data-p="r21" aria-pressed="false">一个月</button>
+        <button data-p="r63" aria-pressed="false">三个月</button>
+        <button data-p="ytd" aria-pressed="false">今年以来</button>
+      </div>
+    </div>
+    <p class="hint">以对应的行业 ETF 计算。点击行业，在选股器里查看该行业全部股票。</p>
+    <div id="sector-bars" class="sector-bars"></div>
+  </section>
+
+  <section id="radar" class="section">
+    <h2 class="sec-title">机会雷达</h2>
+    <p class="hint">按固定技术规则筛选，每 30 分钟更新。这是候选名单，不是买入建议。</p>
+    <div class="tabs" role="tablist" id="radar-tabs"></div>
+    <p id="radar-desc" class="radar-desc"></p>
+    <div id="radar-list" class="radar-list" role="tabpanel"></div>
+  </section>
+
+  <section id="news" class="section">
+    <div class="sec-head">
+      <h2 class="sec-title">政策与新闻</h2>
+      <div class="seg" role="group" aria-label="新闻排序" id="news-sort">
+        <button data-s="score" aria-pressed="true">按重要性</button>
+        <button data-s="time" aria-pressed="false">按时间</button>
+      </div>
+    </div>
+    <div class="chips" id="news-tags" role="group" aria-label="按主题筛选"></div>
+    <div class="news-cols">
+      <div>
+        <h3 class="col-title">官方：美联储、白宫、监管与经济数据</h3>
+        <ol id="news-official" class="news-list"></ol>
+      </div>
+      <div>
+        <h3 class="col-title">市场与公司</h3>
+        <ol id="news-market" class="news-list"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="macro" class="section">
+    <h2 class="sec-title">宏观数据</h2>
+    <p class="hint">来自圣路易斯联储 FRED 数据库，显示最新一期数值和与上一期的变化。</p>
+    <div class="macro-grid" id="macro-grid"></div>
+  </section>
+
+  <section id="earnings" class="section">
+    <h2 class="sec-title">未来三周财报</h2>
+    <p class="hint">财报前后股价波动通常会明显加大，短线交易要特别注意。</p>
+    <div id="earn-list" class="earn-list"></div>
+  </section>
+
+  <section id="screener" class="section">
+    <div class="sec-head">
+      <h2 class="sec-title">选股器</h2>
+      <div class="filters">
+        <label class="sr" for="q">搜索股票</label>
+        <input id="q" type="search" placeholder="搜索代码或名称，如 NVDA、英伟达" autocomplete="off">
+        <label class="sr" for="f-sector">行业</label>
+        <select id="f-sector"><option value="">全部行业</option></select>
+        <label class="sr" for="f-action">短线信号</label>
+        <select id="f-action"><option value="">全部信号</option></select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="table">
+        <thead><tr>
+          <th data-k="sym">股票</th><th data-k="last" class="num">价格</th><th data-k="chg1" class="num">今日</th>
+          <th data-k="r5" class="num">一周</th><th data-k="r21" class="num">一个月</th><th data-k="ytd" class="num">今年</th>
+          <th data-k="rsi" class="num">RSI</th><th data-k="level">趋势</th><th data-k="action">短线信号</th>
+          <th data-k="ref" class="num">买入参考</th><th data-k="stop" class="num">止损</th><th data-k="target" class="num">目标</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="muted small" id="table-count"></p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p><b>数据来源：</b>行情来自 Yahoo Finance（可能有 15 分钟左右延迟），宏观数据来自 FRED，新闻来自美联储、白宫、SEC、BLS、BEA、CNBC、MarketWatch、Yahoo 财经的公开 RSS。新闻标题保留原文，点击可阅读原文。</p>
+  <p><b>重要提示：</b>本站所有信号、价位和名单都由固定的技术规则自动计算，不构成投资建议，不保证盈利。股市有风险，请独立判断，只用亏得起的钱投资。</p>
+</footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-title" hidden>
+  <div class="modal-box">
+    <button class="close" id="m-close" aria-label="关闭">×</button>
+    <div id="m-body"></div>
+  </div>
+</div>
+<div class="tip" id="tip" role="tooltip" hidden></div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
